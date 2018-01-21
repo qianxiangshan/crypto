@@ -1,0 +1,1 @@
+gcc libcrypto.c -lgcrypt -lgpg-error
