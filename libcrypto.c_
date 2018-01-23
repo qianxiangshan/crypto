@@ -1,0 +1,34 @@
+#include <gcrypt.h>
+#include <gpg-error.h>
+#include <stdio.h>
+#include <stdint.h>
+
+
+uint8_t data[16]={1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6};
+uint8_t key[16]={1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6};
+
+
+//gcry_error_t gcry_cipher_open (gcry_cipher_hd_t *hd, int algo, int mode, unsigned int flags)
+//void gcry_cipher_close (gcry_cipher_hd_t h)
+//gcry_error_t gcry_cipher_encrypt (gcry_cipher_hd_t h, unsigned char *out, size_t outsize, const unsigned char *in, size_t inlen)
+//gcry_error_t gcry_cipher_decrypt (gcry_cipher_hd_t h, unsigned char *out, size_t outsize, const unsigned char *in, size_t inlen)
+int main(){
+    gcry_error_t err;
+    gcry_cipher_hd_t twofishfd;
+    err=gcry_cipher_open(&twofishfd,GCRY_CIPHER_TWOFISH128,GCRY_CIPHER_MODE_CBC,0);
+    printf("open %s\n",gpg_strerror(err));
+
+    err=gcry_cipher_setkey(twofishfd, key, 16);
+    printf("gcry_cipher_setkey %s\n",gpg_strerror(err));
+    uint8_t out[32]={0};
+    err=gcry_cipher_encrypt(twofishfd,out,16,data,16);
+    printf("gcry_cipher_encrypt %s\n",gpg_strerror(err));
+
+    int i=0;
+    for (;i<16;i++){
+        printf("%02x",out[i]);
+    }
+    printf("\n");
+    gcry_cipher_close(twofishfd);
+    return 0;
+}
